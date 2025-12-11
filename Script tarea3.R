@@ -102,7 +102,6 @@ datos_limpios %>%
   theme_minimal() +
   theme(legend.position = "right")
 
-# 1. Instalar paquetes necesarios (solo hazlo una vez)
 install.packages("sf")
 install.packages("rnaturalearth")
 install.packages("rnaturalearthdata")
@@ -147,6 +146,5 @@ ggplot(data = mapa_final) +
     plot.subtitle = element_text(hjust = 0.5, size = 12)             
   )
 
-#Mapa EEUU
 
 
