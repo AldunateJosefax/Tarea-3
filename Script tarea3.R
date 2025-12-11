@@ -102,6 +102,10 @@ datos_limpios %>%
   theme_minimal() +
   theme(legend.position = "right")
 
+
+# Mapas -------------------------------------------------------------------
+
+
 install.packages("sf")
 install.packages("rnaturalearth")
 install.packages("rnaturalearthdata")
@@ -147,40 +151,264 @@ ggplot(data = mapa_final) +
   )
 
 
+# Mapas por categorías ----------------------------------------------------
+
+# Mapa medicina -----------------------------------------------------------
 
 
-ciudades_usa <- datos1 %>% 
-  filter(pais_nacimiento %in% c("USA", "United States", "United States of America")) %>%
-  separate(geo_punto_2D, into = c("lat", "lon"), sep = ",", convert = TRUE) %>%
-  
- 
-  group_by(ciudad_nacimiento, lat, lon) %>%
-  summarise(total_premios = n(), .groups = "drop") %>%
-  filter(!is.na(lat) & !is.na(lon) & ciudad_nacimiento != "") %>%
-  
+datos_filtrados <- datos_limpios %>% 
+  filter(categoria == "Medicine") %>%
+  filter(!is.na(pais_nacimiento)) %>%
+  mutate(pais_nacimiento = case_when(
+    pais_nacimiento %in% c("United States of America", "USA") ~ "United States",
+    pais_nacimiento == "United Kingdom" ~ "United Kingdom",
+    pais_nacimiento %in% c("Germany (Fed. Rep.)", "Germany (DR)") ~ "Germany",
+    pais_nacimiento == "Union of Soviet Socialist Republics" ~ "Russia",
+    pais_nacimiento == "Netherlands" ~ "Netherlands",
+    TRUE ~ pais_nacimiento
+  )) %>%
+  group_by(pais_nacimiento) %>%
+  summarise(total = n(), .groups = "drop")
 
-  arrange(total_premios)
+mapa_mundo <- ne_countries(scale = "medium", returnclass = "sf") %>%
+  filter(name != "Antarctica")
 
-mapa_eeuu <- ne_states(country = "united states of america", returnclass = "sf") %>%
-  filter(!name %in% c("Alaska", "Hawaii"))
+mapa_final_individual <- mapa_mundo %>%
+  left_join(datos_filtrados, by = c("name" = "pais_nacimiento"))
 
-
-ggplot() +
-  geom_sf(data = mapa_eeuu, fill = "#F5F5F5", color = "gray80") +
-  geom_point(data = ciudades_usa, 
-             aes(x = lon, y = lat, size = total_premios, color = total_premios), 
-             alpha = 0.5) +
-  
-  geom_text(data = ciudades_usa %>% filter(total_premios > 10),
-            aes(x = lon, y = lat, label = ciudad_nacimiento),
-            vjust = -0.2, size = 5, fontface = "bold", color = "black") +
-  scale_size_continuous(range = c(2, 10), name = "Cantidad") + 
-  scale_color_viridis_c(option = "plasma", name = "Cantidad") + 
-  coord_sf(xlim = c(-125, -66), ylim = c(24, 50)) +
+ggplot(data = mapa_final_individual) +
+  geom_sf(aes(fill = total), color = "white", size = 0.2) +
+  scale_fill_gradient(
+    low = "#F5F5F5",   
+    high = "#00BFC4",  
+    na.value = "#F0F0F0",
+    name = "Premios"
+  ) +
   labs(
-    title = "Ciudades de EE.UU. con más Premios Nobel",
-    subtitle = "Tamaño del punto representa cantidad de nacimientos de laureados",
-    x = "", y = ""
+    title = paste("Mapa de Premios Nobel:", "Medicina"),
+    subtitle = paste("Premios por país en la categoría de Medicina"),
+    caption = "Fuente: Dataset Nobel"
   ) +
   theme_void() +
-  theme(legend.position = "right")
+  theme(
+    legend.position = "bottom",
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 16),
+    plot.subtitle = element_text(hjust = 0.5, size = 12)
+  )
+
+
+
+# Mapa Quimica ------------------------------------------------------------
+
+datos_filtrados <- datos_limpios %>% 
+  filter(categoria == "Chemistry") %>%
+  filter(!is.na(pais_nacimiento)) %>%
+  mutate(pais_nacimiento = case_when(
+    pais_nacimiento %in% c("United States of America", "USA") ~ "United States",
+    pais_nacimiento == "United Kingdom" ~ "United Kingdom",
+    pais_nacimiento %in% c("Germany (Fed. Rep.)", "Germany (DR)") ~ "Germany",
+    pais_nacimiento == "Union of Soviet Socialist Republics" ~ "Russia",
+    pais_nacimiento == "Netherlands" ~ "Netherlands",
+    TRUE ~ pais_nacimiento
+  )) %>%
+  group_by(pais_nacimiento) %>%
+  summarise(total = n(), .groups = "drop")
+
+mapa_mundo <- ne_countries(scale = "medium", returnclass = "sf") %>%
+  filter(name != "Antarctica")
+
+mapa_final_individual <- mapa_mundo %>%
+  left_join(datos_filtrados, by = c("name" = "pais_nacimiento"))
+
+ggplot(data = mapa_final_individual) +
+  geom_sf(aes(fill = total), color = "white", size = 0.2) +
+  scale_fill_gradient(
+    low = "#F5F5F5",   
+    high = "#F8766D",  
+    na.value = "#F0F0F0",
+    name = "Premios"
+  ) +
+  labs(
+    title = paste("Mapa de Premios Nobel:", "Química"),
+    subtitle = paste("Premios por país en la categoría de Química"),
+    caption = "Fuente: Dataset Nobel"
+  ) +
+  theme_void() +
+  theme(
+    legend.position = "bottom",
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 16),
+    plot.subtitle = element_text(hjust = 0.5, size = 12)
+  )
+
+
+# Mapa Fisica -------------------------------------------------------------
+
+datos_filtrados <- datos_limpios %>% 
+  filter(categoria == "Physics") %>%
+  filter(!is.na(pais_nacimiento)) %>%
+  mutate(pais_nacimiento = case_when(
+    pais_nacimiento %in% c("United States of America", "USA") ~ "United States",
+    pais_nacimiento == "United Kingdom" ~ "United Kingdom",
+    pais_nacimiento %in% c("Germany (Fed. Rep.)", "Germany (DR)") ~ "Germany",
+    pais_nacimiento == "Union of Soviet Socialist Republics" ~ "Russia",
+    pais_nacimiento == "Netherlands" ~ "Netherlands",
+    TRUE ~ pais_nacimiento
+  )) %>%
+  group_by(pais_nacimiento) %>%
+  summarise(total = n(), .groups = "drop")
+
+mapa_mundo <- ne_countries(scale = "medium", returnclass = "sf") %>%
+  filter(name != "Antarctica")
+
+mapa_final_individual <- mapa_mundo %>%
+  left_join(datos_filtrados, by = c("name" = "pais_nacimiento"))
+
+ggplot(data = mapa_final_individual) +
+  geom_sf(aes(fill = total), color = "white", size = 0.2) +
+  scale_fill_gradient(
+    low = "#F5F5F5",   
+    high = "#F564E3",  
+    na.value = "#F0F0F0",
+    name = "Premios"
+  ) +
+  labs(
+    title = paste("Mapa de Premios Nobel:", "Física"),,
+    subtitle = paste("Premios por país en la categoría de fisica"),
+    caption = "Fuente: Dataset Nobel"
+  ) +
+  theme_void() +
+  theme(
+    legend.position = "bottom",
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 16),
+    plot.subtitle = element_text(hjust = 0.5, size = 12)
+  )
+
+
+# Mapa Paz ----------------------------------------------------------------
+
+datos_filtrados <- datos_limpios %>% 
+  filter(categoria == "Peace") %>%
+  filter(!is.na(pais_nacimiento)) %>%
+  mutate(pais_nacimiento = case_when(
+    pais_nacimiento %in% c("United States of America", "USA") ~ "United States",
+    pais_nacimiento == "United Kingdom" ~ "United Kingdom",
+    pais_nacimiento %in% c("Germany (Fed. Rep.)", "Germany (DR)") ~ "Germany",
+    pais_nacimiento == "Union of Soviet Socialist Republics" ~ "Russia",
+    pais_nacimiento == "Netherlands" ~ "Netherlands",
+    TRUE ~ pais_nacimiento
+  )) %>%
+  group_by(pais_nacimiento) %>%
+  summarise(total = n(), .groups = "drop")
+
+mapa_mundo <- ne_countries(scale = "medium", returnclass = "sf") %>%
+  filter(name != "Antarctica")
+
+mapa_final_individual <- mapa_mundo %>%
+  left_join(datos_filtrados, by = c("name" = "pais_nacimiento"))
+
+ggplot(data = mapa_final_individual) +
+  geom_sf(aes(fill = total), color = "white", size = 0.2) +
+  scale_fill_gradient(
+    low = "#F5F5F5",   
+    high = "#619CFF",  
+    na.value = "#F0F0F0",
+    name = "Premios"
+  ) +
+  labs(
+    title = paste("Mapa de Premios Nobel:", "Paz"),,
+    subtitle = paste("Premios por país en la categoría de la paz"),
+    caption = "Fuente: Dataset Nobel"
+  ) +
+  theme_void() +
+  theme(
+    legend.position = "bottom",
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 16),
+    plot.subtitle = element_text(hjust = 0.5, size = 12)
+  )
+
+
+# Mapa Literatura ---------------------------------------------------------
+
+datos_filtrados <- datos_limpios %>% 
+  filter(categoria == "Literature") %>%
+  filter(!is.na(pais_nacimiento)) %>%
+  mutate(pais_nacimiento = case_when(
+    pais_nacimiento %in% c("United States of America", "USA") ~ "United States",
+    pais_nacimiento == "United Kingdom" ~ "United Kingdom",
+    pais_nacimiento %in% c("Germany (Fed. Rep.)", "Germany (DR)") ~ "Germany",
+    pais_nacimiento == "Union of Soviet Socialist Republics" ~ "Russia",
+    pais_nacimiento == "Netherlands" ~ "Netherlands",
+    TRUE ~ pais_nacimiento
+  )) %>%
+  group_by(pais_nacimiento) %>%
+  summarise(total = n(), .groups = "drop")
+
+mapa_mundo <- ne_countries(scale = "medium", returnclass = "sf") %>%
+  filter(name != "Antarctica")
+
+mapa_final_individual <- mapa_mundo %>%
+  left_join(datos_filtrados, by = c("name" = "pais_nacimiento"))
+
+ggplot(data = mapa_final_individual) +
+  geom_sf(aes(fill = total), color = "white", size = 0.2) +
+  scale_fill_gradient(
+    low = "#F5F5F5",   
+    high = "#00BA38",  
+    na.value = "#F0F0F0",
+    name = "Premios"
+  ) +
+  labs(
+    title = paste("Mapa de Premios Nobel:", "Literatura"),,
+    subtitle = paste("Premios por país en la categoría de literatura"),
+    caption = "Fuente: Dataset Nobel"
+  ) +
+  theme_void() +
+  theme(
+    legend.position = "bottom",
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 16),
+    plot.subtitle = element_text(hjust = 0.5, size = 12)
+  )
+
+
+# Mapa Economía -----------------------------------------------------------
+
+
+datos_filtrados <- datos_limpios %>% 
+  filter(categoria == "Economics") %>%
+  filter(!is.na(pais_nacimiento)) %>%
+  mutate(pais_nacimiento = case_when(
+    pais_nacimiento %in% c("United States of America", "USA") ~ "United States",
+    pais_nacimiento == "United Kingdom" ~ "United Kingdom",
+    pais_nacimiento %in% c("Germany (Fed. Rep.)", "Germany (DR)") ~ "Germany",
+    pais_nacimiento == "Union of Soviet Socialist Republics" ~ "Russia",
+    pais_nacimiento == "Netherlands" ~ "Netherlands",
+    TRUE ~ pais_nacimiento
+  )) %>%
+  group_by(pais_nacimiento) %>%
+  summarise(total = n(), .groups = "drop")
+
+mapa_mundo <- ne_countries(scale = "medium", returnclass = "sf") %>%
+  filter(name != "Antarctica")
+
+mapa_final_individual <- mapa_mundo %>%
+  left_join(datos_filtrados, by = c("name" = "pais_nacimiento"))
+
+ggplot(data = mapa_final_individual) +
+  geom_sf(aes(fill = total), color = "white", size = 0.2) +
+  scale_fill_gradient(
+    low = "#F5F5F5",   
+    high = "#B79F00",  
+    na.value = "#F0F0F0",
+    name = "Premios"
+  ) +
+  labs(
+    title = paste("Mapa de Premios Nobel:", "Economía"),,
+    subtitle = paste("Premios por país en la categoría de economía"),
+    caption = "Fuente: Dataset Nobel"
+  ) +
+  theme_void() +
+  theme(
+    legend.position = "bottom",
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 16),
+    plot.subtitle = element_text(hjust = 0.5, size = 12)
+  )
