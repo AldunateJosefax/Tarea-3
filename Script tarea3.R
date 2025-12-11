@@ -116,7 +116,7 @@ conteo_paises <- datos_limpios %>%
     pais_nacimiento == "United States of America" ~ "United States",
     pais_nacimiento == "United Kingdom" ~ "United Kingdom", 
     pais_nacimiento %in% c("Germany (Fed. Rep.)", "Germany (DR)") ~ "Germany",
-    TRUE ~ pais_nacimiento # Mantiene el resto igual
+    TRUE ~ pais_nacimiento 
   )) %>%
   group_by(pais_nacimiento) %>%
   summarise(total_premios = n())
@@ -148,3 +148,39 @@ ggplot(data = mapa_final) +
 
 
 
+
+ciudades_usa <- datos1 %>% 
+  filter(pais_nacimiento %in% c("USA", "United States", "United States of America")) %>%
+  separate(geo_punto_2D, into = c("lat", "lon"), sep = ",", convert = TRUE) %>%
+  
+ 
+  group_by(ciudad_nacimiento, lat, lon) %>%
+  summarise(total_premios = n(), .groups = "drop") %>%
+  filter(!is.na(lat) & !is.na(lon) & ciudad_nacimiento != "") %>%
+  
+
+  arrange(total_premios)
+
+mapa_eeuu <- ne_states(country = "united states of america", returnclass = "sf") %>%
+  filter(!name %in% c("Alaska", "Hawaii"))
+
+
+ggplot() +
+  geom_sf(data = mapa_eeuu, fill = "#F5F5F5", color = "gray80") +
+  geom_point(data = ciudades_usa, 
+             aes(x = lon, y = lat, size = total_premios, color = total_premios), 
+             alpha = 0.5) +
+  
+  geom_text(data = ciudades_usa %>% filter(total_premios > 10),
+            aes(x = lon, y = lat, label = ciudad_nacimiento),
+            vjust = -0.2, size = 5, fontface = "bold", color = "black") +
+  scale_size_continuous(range = c(2, 10), name = "Cantidad") + 
+  scale_color_viridis_c(option = "plasma", name = "Cantidad") + 
+  coord_sf(xlim = c(-125, -66), ylim = c(24, 50)) +
+  labs(
+    title = "Ciudades de EE.UU. con más Premios Nobel",
+    subtitle = "Tamaño del punto representa cantidad de nacimientos de laureados",
+    x = "", y = ""
+  ) +
+  theme_void() +
+  theme(legend.position = "right")
