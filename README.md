@@ -1,35 +1,46 @@
-# Tarea-3
-Instalar paquetes
+# Premios y diferencias
+
+## Los premios Nobel, a lo largo de la historia han sido sumamente significativos, y sobre todo para aquellos profesionales que se dedican en alguna de las disciplinas que este premia. Sin embargo, este se ha presentado como un premio de acceso universal, que refleja y felicita a personas destacadas y así un sin fin de cosas, pensando que este puede llegar a ser un reflejo de avances de nuestra sociedad. PERO, ¿es realmente así?. Y aqui es donde observaremos como los premios han demostrado ciertas tendencias o no. 
+
+
+Para ello, lo primero será instalar los paquetes
 
 ```{r}
 install.packages("tidyverse")
 install.packages("ggplot2")
 install.packages("readxl")
+install.packages("readr")
 install.packages("dplyr")
 install.packages("sf")
 install.packages("rnaturalearth")
 install.packages("rnaturalearthdata")
 ```
 
-Cargar librerías
+Para luego cargar las librerías correspondientes
 
 ```{r}
 library(tidyverse)
 library(ggplot2)
 library(readxl)
+library(readr)
 library(dplyr)
 library(sf)
 library(rnaturalearth)
 library(rnaturalearthdata)
 ```
 
-Cargar datos
+Posteriormente cargaremos los datos que fueron entregados por https://github.com/moonshinerd/analise-premios-nobel/blob/main/Trabalho_APC_Nobel_Prizes.ipynb
+
 
 ```{r}
-datos <- read.csv("~/Desktop/Medición y análisis/Laboratorios/Tarea 3/nobel_prize_laureates_dataset.csv")
+datos <- read_delim(
+  "nobel_prize_laureates_dataset.csv",
+  delim = ";",
+  locale = locale(encoding = "Latin1")
+)
 ```
 
-Cambiar nombre de las columnas para poder identificarlas con mayor facilidad
+mbiar nombre de las columnas para poder identificarlas con mayor facilidad
 
 ```{r}
 datos1 <- datos %>%
