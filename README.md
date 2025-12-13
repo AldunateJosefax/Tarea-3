@@ -26,7 +26,7 @@ library(rnaturalearthdata)
 Cargar datos
 
 ```{r}
-datos <- read.csv("nobel_prize_laureates_dataset.csv", sep = ";", stringsAsFactors = FALSE)
+datos <- read.csv("~/Desktop/Medición y análisis/Laboratorios/Tarea 3/nobel_prize_laureates_dataset.csv")
 ```
 
 Cambiar nombre de las columnas para poder identificarlas con mayor facilidad
