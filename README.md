@@ -1,6 +1,6 @@
 # Premios y diferencias
 
-## Los premios Nobel, a lo largo de la historia han sido sumamente significativos, y sobre todo para aquellos profesionales que se dedican en alguna de las disciplinas que este premia. Sin embargo, este se ha presentado como un premio de acceso universal, que refleja y felicita a personas destacadas y así un sin fin de cosas, pensando que este puede llegar a ser un reflejo de avances de nuestra sociedad. PERO, ¿es realmente así?. Y aqui es donde observaremos como los premios han demostrado ciertas tendencias o no. 
+## Los premios Nobel, a lo largo de la historia han sido sumamente significativos, y sobre todo para aquellos profesionales que se dedican en alguna de las disciplinas que este premia. Sin embargo, este se ha presentado como un premio de acceso universal, que refleja y felicita a personas destacadas y así un sin fin de cosas, pensando que este puede llegar a ser un reflejo de avances de nuestra sociedad. PERO, ¿es realmente así?. 
 
 ![f elconfidencial com-original-7c9-985-2ce-7c99852ce2bc3e77a8e7509ec7bdde1b](https://github.com/user-attachments/assets/68e55140-6583-44c1-8f7e-0e7048e4af9b)
 
