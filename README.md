@@ -30,7 +30,7 @@ library(rnaturalearth)
 library(rnaturalearthdata)
 ```
 
-Posteriormente cargaremos los datos que fueron entregados por https://github.com/moonshinerd/analise-premios-nobel/blob/main/Trabalho_APC_Nobel_Prizes.ipynb
+Posteriormente cargaremos los datos que fueron entregados por https://github.com/moonshinerd/analise-premios-nobel/blob/main/Trabalho_APC_Nobel_Prizes.ipynb, el código es diferente al utilizado anteriormente, ya que la base al cargarla de la manera normal, es decir, read.cvs, producia que la base por las comas y puntos, se formara todo en una variable, por lo que fue complejo llegar a poder abrirla de manera correcta.
 
 
 ```{r}
